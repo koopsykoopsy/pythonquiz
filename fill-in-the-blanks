@@ -1,0 +1,170 @@
+# IPND Stage 2 Final Project
+# By Sagar Doshi
+# Programmed on January 25-26, 2016
+
+easyString = ''':::COMMON QUESTIONS:::\n\nWhen starting with Python, and after being introduced to functions, it's normal to not understand why we ___1___ our output, rather than just printing it. The reason is that printing is superficial: it does not allow us to do more with that output beyond just, well, printing it.\n\nAnother common question has to do with the difference between immutable data structures (like numbers, ___2___, or tuples) and mutable data structures (like lists or dictionaries).\n\nImagine a variable 'mammal' that refers to the list like this:\n\n    mammal = ['gorilla','chimpanzee','orangutan','human']\n\nImagine now a new variable 'ape' that is set to equal 'mammal', like this:\n\n    ape = mammal\n\nIn this case, 'ape' is simply an ___3___ for 'mammal'. They refer to the same thing, not to two separate things. Therefore, if we edit 'ape', say by appending 'hobbit'...\n\n    ape.append('hobbit')\n\n...now both 'mammal and '___4___' refer to a list with ___5___ elements, even though we only edited one of the two lists directly. We can prove this by printing (not returning! :-D) each list and reviewing the output.\n'''
+
+easyStringAnswers = ['return','strings','alias','ape','5||or||five']
+ 
+mediumString = ''':::SOLVING PROBLEMS:::\n\nStuck on solving a problem?\n\nFirst of all, don't ___1___! Start by thinking through what you have and what you need to get: in other words, what are your ___2___ and ___3___? I know it's tempting to jump into coding right away, but you might go down an unproductive rabbit hole and get frustrated. Why not get your thoughts organized by writing some ___4___?\n\nIt's particularly helpful, when starting at the big picture, to call ___5___ that don't even exist yet. Once you know the type of tasks you need to accomplish, you can create all the relevant methods.\n\nAt this point, once you know the structure of your tasks, start thinking through your problem and running ___6___ on your solutions as you go through it.\n\nTip: it can be very helpful to use the built-in ___7___ function during testing so that you clearly see what your code does before and after any confusing sections. Good luck!\n'''
+mediumStringAnswers = ['panic','inputs','outputs','pseudocode','functions','tests','print']
+
+hardString = ''':::LOOPING THROUGH ELEMENTS IN A DATA STRUCTURE:::\n\nAs long as the position or ___1___ number of an item isn't necessary for your solution, a ___2___ loop combined with an in operator offer users quite a bit of power and convenience.\n\nThey allow you to iterate over every item in certain data structures, like strings, ___3___, or tuples, and quickly evaluate an expression. When used together, the syntax demands that you create a new ___4___ to refer to, say, the character of a given string or the ___5___ of a given list. In fact, we're using for loops and the in operator in solving this very fill-in-the-blanks quiz!\n'''
+hardStringAnswers = ['index','for','lists','variable||or||parameter','element||or||item']
+
+#########################################################################################
+
+# The Papa function. Initializes the game and kicks off the key variables
+def gameStart():
+    name = raw_input("\nWhat would you like me to call you?\n")
+    passage = ''
+    stringAnswers = ''
+    n7_status = 'off'
+    inputType = 'difficultyGauge'
+    # Makes sure difficulty is a valid and available selection
+    difficultyGauge, n7_status = getInput(name, n7_status, inputType)
+    inputType = 'triesLeft'
+    # Makes sure triesLeft is valid + a little Mass Effect-themed fun...
+    triesLeft, n7_status = getInput(name, n7_status, inputType)
+    # User choice of difficulty lets program determine passage and answer list
+    passage, stringAnswers = passageAssignment(difficultyGauge, passage, stringAnswers)
+    # Sending it all to quiz()
+    return name, triesLeft, passage, stringAnswers, n7_status
+
+# Papa child function. Runs error checks and user input for level selection and number of tries left
+def getInput(name, n7_status, inputType):
+    userInput = 0
+    difficultyOptions = "Please type:\n1 for easy,\n2 for medium, or\n3 for hard.\n"
+    levels = [1,2,3]
+    # Different beginning for difficultyGauge and triesLeft
+    if inputType == 'difficultyGauge':
+        query = "\nWell, " + name + ", how hard do you want this quiz to be?" + difficultyOptions
+    elif inputType == 'triesLeft':
+        query = "\nOkay, how many tries do you want per blank?\n(For Pros: you can win an N7 badge if you succeed with only one try...)\n"
+    # Same middle error check for integers for difficultyGauge and triesLeft
+    userInput = integerCheck(query)
+    # Different ending checks for difficultyGauge and triesLeft
+    if inputType == 'difficultyGauge':
+        while userInput not in levels:
+            print "\nSorry, " + name + ", we only have the three levels. So what'll it be?\n"
+            userInput = integerCheck(query)
+    if inputType == 'triesLeft':
+        if userInput == 1:
+            n7_status = 'on'
+            print "\nN7 mode engaged!\n"
+    return userInput, n7_status
+
+# Papa child function. Specific to the positive integer check for either input.
+def integerCheck(query):
+    while True:
+        try:
+            userInput = int(raw_input(query))
+        except ValueError or userInput < 0: # <-- what you'd get if the user didn't submit a number
+            print "\nSorry, I'm afraid you have to type in a positive integer. Please try again:\n"
+            continue
+        else:
+            break
+    return userInput
+
+# Papa child function. Grabs the correct passage and answers based on level choice
+def passageAssignment(difficultyGauge, passage, stringAnswers):
+    # Assigning the right passage
+    if difficultyGauge == 1:
+        passage = easyString
+        stringAnswers = easyStringAnswers
+    elif difficultyGauge == 2:
+        passage = mediumString
+        stringAnswers = mediumStringAnswers
+    elif difficultyGauge == 3:
+        passage = hardString
+        stringAnswers = hardStringAnswers
+    return passage, stringAnswers
+
+#########################################################################################
+
+# The Mama function. Doesn't take any parameters, but imports everything from gameStart()
+def quiz():
+    name, triesLeft, passage, stringAnswers, n7_status = gameStart()
+    triesLeftReset = triesLeft
+    questionNumber = 1
+    print '\n' + passage
+    while (questionNumber - 1) < len(stringAnswers):
+        while triesLeft >= 0:
+            playerAnswer = raw_input("\nWhat fills in blank #" + str(questionNumber) + "?\n")
+            # Correct responses
+            if playerAnswer.upper() and playerAnswer.upper() in stringAnswers[questionNumber - 1].upper():
+                passage, questionNumber = correct(passage, playerAnswer, questionNumber, stringAnswers)
+                # Refreshes number of remaining tries with correct answer
+                triesLeft = triesLeftReset
+                break
+            # Incorrect responses
+            else:
+                triesLeft = incorrect(triesLeft, name, passage)
+                # Couldn't put this in incorrect(), because need that final, failure return statement in quiz()
+                if triesLeft < 0:
+                    print "\n" + name + ", YOU HAVE FAAAAAAAIIIIIILLLLLLLLLLLED\n\nGAME OVER\n"
+                    return
+    #Only triggers upon true success... AKA correct() should have been called for each right answer
+    victoryCondition(name, n7_status)
+
+# Mama child function. With correct response, increments question number and updates the passage
+def correct(passage, playerAnswer, questionNumber, stringAnswers):
+    print "\nCorrect! Nice job on blank #" + str(questionNumber) + "!\n"
+    passage = freshenPassage(passage, playerAnswer, questionNumber, stringAnswers)
+    print passage
+    questionNumber += 1
+    return passage, questionNumber
+
+# Mama child function. Breaks up passage, finds and fills in the correct answer, then stitches it back together
+def freshenPassage(passage, playerAnswer, questionNumber, stringAnswers):
+    splitted = passage.split()
+    passage_index = 0
+    blank = '___' + str(questionNumber) + '___'
+    while passage_index < len(splitted):
+        for element in splitted:
+            # Note: using the in operator allows for inexact answers ('function' accepted when 'functions' is
+            # correct answer). Also allows for variation: for example, Hard Q5 could be answered as 'element' or 'item'
+            if blank in element:
+                # Fills in with true correct response, due to potentially inexact user answer, described above
+                splitted[passage_index] = splitted[passage_index].replace(blank, stringAnswers[questionNumber - 1])
+            passage_index += 1
+    # I unfortunately can't seem to rejoin the string in a way that keeps the nice formatting,
+    # so everything but the first passage printout looks like a thick, blotchy paragraph
+    return ' '.join(splitted)
+
+# Mama child function. Where triesLeft comes into its own, ticking itself down with snarky commentary
+def incorrect(triesLeft, name, passage):
+    if triesLeft > 1:
+        print "\n" + name + ", I'm afraid that's incorrect. You have " + str(triesLeft) + " tries left. Let's try again:\n"
+    elif triesLeft == 1:
+        print "\nCome on, " + name + "! You're almost out of tries. Just one left. Let's make it a good one.\n"
+    print passage
+    triesLeft -= 1
+    return triesLeft
+
+# Mama child function. Has some fun with ASCII art, but is otherwise just victorious printouts.
+def victoryCondition(name, n7_status):
+    n7 = '''
+     _        ______  
+    ( (    /|/ ___  \ 
+    |  \  ( |\/   )  )
+    |   \ | |    /  / 
+    | (\ \) |   /  /  
+    | | \   |  /  /   
+    | )  \  | /  /    
+    |/    )_) \_/\n\n'''            
+    if n7_status == 'on':
+        print "\nCommander " + name + ", on behalf of the Systems Alliance, I am pleased to award you the N7 designation, the highest honor we have to give. Go, my child. Go, and frolic in your victory.\n"
+        print n7
+    else:
+        print "\nHey! You did it! Congratulations. Give yourself a well-deserved pat on the back."
+        print "\nBut... Are you N7 material? Try the quiz again on N7 mode, if you think you can handle it. Until next time, my friend.\n\n"
+
+
+# The humble call that makes it all go down
+quiz()
+
+# Took me a long, long time to do this. I don't think I did it very efficiently, but it's damn satisfying
+# when it finally comes together. I wish I could've gotten the passages to rejoin with nice formatting.
+# I originally failed to follow mediumString's own advice, though I do think it's sometimes hard to know
+# the structure of the problem you're solving until you play around a bit first... Thank you for reviewing!
