@@ -16,7 +16,7 @@ hardStringAnswers = ['index','for','lists','variable||or||parameter','element||o
 
 # The Papa function. Initializes the game and kicks off the key variables
 def gameStart():
-    name = raw_input("\nWhat would you like me to call you?\n")
+    name = input("\nWhat would you like me to call you?\n")
     passage = ''
     stringAnswers = ''
     n7_status = 'off'
@@ -46,21 +46,21 @@ def getInput(name, n7_status, inputType):
     # Different ending checks for difficultyGauge and triesLeft
     if inputType == 'difficultyGauge':
         while userInput not in levels:
-            print "\nSorry, " + name + ", we only have the three levels. So what'll it be?\n"
+            print ("\nSorry, " + name + ", we only have the three levels. So what'll it be?\n")
             userInput = integerCheck(query)
     if inputType == 'triesLeft':
         if userInput == 1:
             n7_status = 'on'
-            print "\nN7 mode engaged!\n"
+            print ("\nN7 mode engaged!\n")
     return userInput, n7_status
 
 # Papa child function. Specific to the positive integer check for either input.
 def integerCheck(query):
     while True:
         try:
-            userInput = int(raw_input(query))
+            userInput = int(input(query))
         except ValueError or userInput < 0: # <-- what you'd get if the user didn't submit a number
-            print "\nSorry, I'm afraid you have to type in a positive integer. Please try again:\n"
+            print ("\nSorry, I'm afraid you have to type in a positive integer. Please try again:\n")
             continue
         else:
             break
@@ -87,10 +87,10 @@ def quiz():
     name, triesLeft, passage, stringAnswers, n7_status = gameStart()
     triesLeftReset = triesLeft
     questionNumber = 1
-    print '\n' + passage
+    print ('\n' + passage)
     while (questionNumber - 1) < len(stringAnswers):
         while triesLeft >= 0:
-            playerAnswer = raw_input("\nWhat fills in blank #" + str(questionNumber) + "?\n")
+            playerAnswer = input("\nWhat fills in blank #" + str(questionNumber) + "?\n")
             # Correct responses
             if playerAnswer.upper() and playerAnswer.upper() in stringAnswers[questionNumber - 1].upper():
                 passage, questionNumber = correct(passage, playerAnswer, questionNumber, stringAnswers)
@@ -102,16 +102,16 @@ def quiz():
                 triesLeft = incorrect(triesLeft, name, passage)
                 # Couldn't put this in incorrect(), because need that final, failure return statement in quiz()
                 if triesLeft < 0:
-                    print "\n" + name + ", YOU HAVE FAAAAAAAIIIIIILLLLLLLLLLLED\n\nGAME OVER\n"
+                    print ("\n" + name + ", YOU HAVE FAAAAAAAIIIIIILLLLLLLLLLLED\n\nGAME OVER\n")
                     return
     #Only triggers upon true success... AKA correct() should have been called for each right answer
     victoryCondition(name, n7_status)
 
 # Mama child function. With correct response, increments question number and updates the passage
 def correct(passage, playerAnswer, questionNumber, stringAnswers):
-    print "\nCorrect! Nice job on blank #" + str(questionNumber) + "!\n"
+    print ("\nCorrect! Nice job on blank #" + str(questionNumber) + "!\n")
     passage = freshenPassage(passage, playerAnswer, questionNumber, stringAnswers)
-    print passage
+    print (passage)
     questionNumber += 1
     return passage, questionNumber
 
@@ -135,10 +135,10 @@ def freshenPassage(passage, playerAnswer, questionNumber, stringAnswers):
 # Mama child function. Where triesLeft comes into its own, ticking itself down with snarky commentary
 def incorrect(triesLeft, name, passage):
     if triesLeft > 1:
-        print "\n" + name + ", I'm afraid that's incorrect. You have " + str(triesLeft) + " tries left. Let's try again:\n"
+        print ("\n" + name + ", I'm afraid that's incorrect. You have " + str(triesLeft) + " tries left. Let's try again:\n")
     elif triesLeft == 1:
-        print "\nCome on, " + name + "! You're almost out of tries. Just one left. Let's make it a good one.\n"
-    print passage
+        print ("\nCome on, " + name + "! You're almost out of tries. Just one left. Let's make it a good one.\n")
+    print (passage)
     triesLeft -= 1
     return triesLeft
 
@@ -154,11 +154,11 @@ def victoryCondition(name, n7_status):
     | )  \  | /  /    
     |/    )_) \_/\n\n'''            
     if n7_status == 'on':
-        print "\nCommander " + name + ", on behalf of the Systems Alliance, I am pleased to award you the N7 designation, the highest honor we have to give. Go, my child. Go, and frolic in your victory.\n"
-        print n7
+        print ("\nCommander " + name + ", on behalf of the Systems Alliance, I am pleased to award you the N7 designation, the highest honor we have to give. Go, my child. Go, and frolic in your victory.\n")
+        print (n7)
     else:
-        print "\nHey! You did it! Congratulations. Give yourself a well-deserved pat on the back."
-        print "\nBut... Are you N7 material? Try the quiz again on N7 mode, if you think you can handle it. Until next time, my friend.\n\n"
+        print ("\nHey! You did it! Congratulations. Give yourself a well-deserved pat on the back.")
+        print ("\nBut... Are you N7 material? Try the quiz again on N7 mode, if you think you can handle it. Until next time, my friend.\n\n")
 
 
 # The humble call that makes it all go down
